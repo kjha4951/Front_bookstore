@@ -18,7 +18,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
  */
 const PrivateRoute = ({ children }) => {
   const { user } = useContext(BookContext);
-  return user ? children : <Navigate to="/login" />;
+  return user ? children : <Navigate to="/register" />;
 };
 
 /**
