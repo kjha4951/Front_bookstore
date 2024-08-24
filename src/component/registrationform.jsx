@@ -14,6 +14,7 @@ const RegisterForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   // Context for registration function
   const { register } = useContext(BookContext);
@@ -37,11 +38,14 @@ const RegisterForm = () => {
     }
     try {
       await register(email, password);
-      navigate('/login'); // Redirect to login after successful registration
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/login'); 
+      }, 2000);
     } catch (error) {
       setError(error.message || 'An error occurred. Please try again.');
     } finally {
-      setLoading(false); // Set loading to false once the process is complete
+      setLoading(false); 
     }
   };
 
@@ -51,6 +55,11 @@ const RegisterForm = () => {
       {error && (
         <Alert variant="danger">
           {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert variant="success">
+          Successfully registered! Redirecting to login page in 2 seconds...
         </Alert>
       )}
       <Form onSubmit={handleSubmit}>
@@ -83,4 +92,5 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+
 
