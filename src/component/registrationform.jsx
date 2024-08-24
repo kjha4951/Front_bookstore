@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { BookContext } from '../context/BookContext';
 
 /**
@@ -9,10 +9,11 @@ import { BookContext } from '../context/BookContext';
  * It handles form submission and redirects to the login page upon successful registration.
  */
 const RegisterForm = () => {
-  // State hooks for form inputs and error message
+  // State hooks for form inputs, error message, and loading state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Context for registration function
   const { register } = useContext(BookContext);
@@ -28,12 +29,19 @@ const RegisterForm = () => {
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when the form is submitted
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      setLoading(false);
+      return;
+    }
     try {
       await register(email, password);
       navigate('/login'); // Redirect to login after successful registration
     } catch (error) {
-      // Display error message on the screen
       setError(error.message || 'An error occurred. Please try again.');
+    } finally {
+      setLoading(false); // Set loading to false once the process is complete
     }
   };
 
@@ -66,8 +74,8 @@ const RegisterForm = () => {
             required
           />
         </Form.Group>
-        <Button type="submit" variant="primary" className="w-100">
-          Register
+        <Button type="submit" variant="primary" className="w-100" disabled={loading}>
+          {loading ? <Spinner animation="border" size="sm" /> : 'Register'}
         </Button>
       </Form>
     </Container>
@@ -75,3 +83,4 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+

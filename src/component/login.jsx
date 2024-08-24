@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookContext } from '../context/BookContext';
-import { Container, Form, Button } from 'react-bootstrap';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 
 /**
  * LoginForm component allows users to log in with their email and password.
@@ -11,6 +12,8 @@ const LoginForm = () => {
   // State variables for email and password input fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Extract login function from BookContext
   const { login } = useContext(BookContext);
@@ -24,20 +27,29 @@ const LoginForm = () => {
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       // Perform login and await response
       await login(email, password);
       // Redirect to the home page after successful login
       navigate('/');
     } catch (error) {
-      console.error('Login Error:', error.response?.data || error.message);
-      // Optionally handle login errors here (e.g., show a message to the user)
+      const errorMessage = error.response?.data?.message || error.message;
+      setError(errorMessage);
+      console.error('Login Error:', errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Container className="mt-4">
       <h4 className="mb-4">Login</h4>
+      {error && (
+        <Alert variant="danger" className="mb-4">
+          {error}
+        </Alert>
+      )}
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label>Email</Form.Label>
@@ -63,8 +75,13 @@ const LoginForm = () => {
           type="submit"
           variant="primary"
           className="w-100"
+          disabled={loading}
         >
-          Login
+          {loading ? (
+            <Spinner animation="border" size="sm" />
+          ) : (
+            'Login'
+          )}
         </Button>
       </Form>
     </Container>
@@ -72,3 +89,4 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
