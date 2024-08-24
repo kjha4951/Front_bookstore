@@ -34,6 +34,9 @@ const RegisterForm = () => {
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
       setLoading(false);
+      setTimeout(() => {
+        setError('');
+      }, 2000);
       return;
     }
     try {
