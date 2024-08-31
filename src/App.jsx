@@ -1,25 +1,13 @@
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { BookProvider, BookContext } from './context/BookContext';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BookProvider } from './context/BookContext';
 import BookList from './component/Listofbook';
 import BookForm from './component/Bookform';
 import LoginForm from './component/login';
 import RegisterForm from './component/registrationform';
 import Navbar from './component/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-/**
- * PrivateRoute component protects routes that require authentication.
- * Redirects unauthenticated users to the login page.
- * 
- * @param {Object} props - The properties object
- * @param {React.ReactNode} props.children - The child elements to render if authenticated
- * @returns {React.ReactNode} - Renders children if authenticated, otherwise redirects to login page
- */
-const PrivateRoute = ({ children }) => {
-  const { user } = useContext(BookContext);
-  return user ? children : <Navigate to="/register" />;
-};
+import PrivateRoute from './component/PrivateRoute'; // Ensure this is imported correctly
 
 /**
  * App component sets up the routing for the application and wraps it in the BookProvider.

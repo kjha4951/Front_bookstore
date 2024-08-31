@@ -9,46 +9,39 @@ import { BookContext } from '../context/BookContext';
  * It handles form submission and redirects to the login page upon successful registration.
  */
 const RegisterForm = () => {
-  // State hooks for form inputs, error message, and loading state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Context for registration function
   const { register } = useContext(BookContext);
-
-  // Hook for navigation
   const navigate = useNavigate();
 
-  /**
-   * Handle form submission.
-   * Registers the user and then redirects to the login page.
-   * 
-   * @param {Object} e - The form submission event
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when the form is submitted
+    setLoading(true);
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
       setLoading(false);
       setTimeout(() => {
         setError('');
-      }, 2000);
+      }, 1000);
       return;
     }
     try {
       await register(email, password);
       setSuccess(true);
       setTimeout(() => {
-        navigate('/login'); 
+        navigate('/login');
       }, 2000);
     } catch (error) {
       setError(error.message || 'An error occurred. Please try again.');
+      setTimeout(() => {
+        setError('');
+      }, 3000);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -95,5 +88,3 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
-
-

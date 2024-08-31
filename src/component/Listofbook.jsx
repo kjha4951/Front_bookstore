@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { BookContext } from '../context/BookContext';
-import { Table, Container, Spinner, Button } from 'react-bootstrap';
+import { Table, Container, Spinner, Button, Alert } from 'react-bootstrap';
 
 /**
  * BookList component displays a list of books with options to delete them.
@@ -8,6 +8,9 @@ import { Table, Container, Spinner, Button } from 'react-bootstrap';
  * Uses Bootstrap for styling and displays a loading spinner while data is being fetched.
  */
 const BookList = () => {
+  // State for success message
+  const [success, setSuccess] = useState('');
+
   // Extract state and functions from BookContext
   const { books, loading, deleteBook } = useContext(BookContext);
 
@@ -21,6 +24,10 @@ const BookList = () => {
   const handleDelete = async (bookId) => {
     try {
       await deleteBook(bookId);
+      setSuccess('Book deleted successfully!');
+      setTimeout(() => {
+        setSuccess('');
+      }, 2000); // Hide success message after 2 seconds
     } catch (error) {
       console.error('Delete Error:', error.response?.data || error.message);
     }
@@ -29,6 +36,11 @@ const BookList = () => {
   return (
     <Container className="mt-4">
       <h4 className="mb-4">Book List</h4>
+      {success && (
+        <Alert variant="success" className="mb-4">
+          {success}
+        </Alert>
+      )}
       <Table striped bordered hover responsive="md">
         <thead>
           <tr>

@@ -1,42 +1,33 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookContext } from '../context/BookContext';
-import { Container, Form, Button, Alert } from 'react-bootstrap';
-import { Spinner } from 'react-bootstrap';
-
-/**
- * LoginForm component allows users to log in with their email and password.
-**/
+import { Container, Form, Button, Alert, Spinner } from 'react-bootstrap';
 
 const LoginForm = () => {
-  // State variables for email and password input fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
-  // Extract login function from BookContext
   const { login } = useContext(BookContext);
-
-  // Hook for navigation
   const navigate = useNavigate();
 
-  /**
-   * Handle form submission for login.
-   * @param {React.FormEvent} e - The form submission event.
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setSuccess(false); // Reset success state on form submit
     try {
-      // Perform login and await response
       await login(email, password);
-      // Redirect to the home page after successful login
-      navigate('/');
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/'); // Redirect to the home page or another page after successful login
+      }, 1000);
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       setError(errorMessage);
       console.error('Login Error:', errorMessage);
+      setSuccess(false); // Ensure success state is reset on error
     } finally {
       setLoading(false);
     }
@@ -48,6 +39,11 @@ const LoginForm = () => {
       {error && (
         <Alert variant="danger" className="mb-4">
           {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert variant="success" className="mb-4">
+          Successfully logged in! Redirecting to the homepage in 2 seconds...
         </Alert>
       )}
       <Form onSubmit={handleSubmit}>
@@ -89,4 +85,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
